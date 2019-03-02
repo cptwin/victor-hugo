@@ -1,7 +1,7 @@
 baseurl = "/"
 languageCode = "en-us"
 languageLang = "en"
-title = "CptWin - INSERT SITE NAME HERE"
+title = "CptWin - Information Security and Technology"
 theme = "beautifulhugo"
 
 # RSS, categories and tags disabled for an easy start
