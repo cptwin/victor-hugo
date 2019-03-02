@@ -12,14 +12,14 @@ disableKinds = ["RSS", "taxonomy", "taxonomyTerm"]
 [[menu.main]]
   name = "Home"
   url  = "/"
-  weight = 0
+  weight = 10
 
  [[menu.main]]
   name = "About"
   url  = "about"
-  weight = 5
+  weight = 0
 
  [[menu.main]]
   name = "Blog"
   url  = "post/"
-  weight = 10
+  weight = 5
