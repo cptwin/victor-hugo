@@ -2,7 +2,8 @@ baseurl = "/"
 languageCode = "en-us"
 languageLang = "en"
 title = "CptWin - Information Security"
-theme = "beautifulhugo"
+theme = "hugo-bearblog"
+#theme = "beautifulhugo"
 
 # RSS, categories and tags disabled for an easy start
 # See configuration options for more details: 
