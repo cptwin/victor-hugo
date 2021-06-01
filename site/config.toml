@@ -1,14 +1,20 @@
 baseurl = "/"
 languageCode = "en-us"
 languageLang = "en"
-title = "CptWin - Information Security"
-theme = "hugo-bearblog"
-#theme = "beautifulhugo"
+title = "Dajne Win (CptWin) - Information Security"
+theme = "beautifulhugo"
 
 # RSS, categories and tags disabled for an easy start
 # See configuration options for more details: 
 # https://gohugo.io/getting-started/configuration/#toml-configuration
-disableKinds = ["RSS", "taxonomy", "taxonomyTerm"]
+disableKinds = ["taxonomy", "taxonomyTerm"]
+
+enableRobotsTXT = true
+
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
 
 [[menu.main]]
   name = "Home"
