@@ -1,7 +1,7 @@
 baseurl = "/"
 languageCode = "en-us"
 languageLang = "en"
-title = "CptWin - Information Security"
+title = "CptWin"
 theme = "beautifulhugo"
 
 # RSS, categories and tags disabled for an easy start
