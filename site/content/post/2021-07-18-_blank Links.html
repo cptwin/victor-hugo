@@ -1,0 +1,32 @@
+---
+title: "_blank Links"
+date: 2021-07-18
+author: Dajne Win
+---
+
+<div>
+<p>I’ve had this post half written up for some time, and recently set aside some time to actually get it written.</p>
+<p>Quite often during pentesting I have come across a web application that has functionality that allows users to set links in their profile, LinkedIn or Twitter for example. Sometimes these links are fully controllable, you can point them at any URL. If the link is controllable and the link has a target attribute of _blank, then an attack (dubbed “tab-nabbing”) can be performed.</p>
+<h3>What is _blank?</h3>
+<p>_blank is an option for the target attribute for HTML links. The target attribute allows the web developer to specify to the browser, where the link should open. In this case the _blank option opens the linked document in a new window or tab.</p>
+<h3>The security issue?</h3>
+<p>Tab-nabbing allows the newly opened tab to control the tab that opened it. An example attack would be, a user clicks on a link to visit your Twitter profile, it opens in a new tab, they close that tab and notice they have been “logged out” of the original application. They then enter their credentials to login, unknowingly the original tab has been redirected to a fake login page and they have just had their credentials stolen.</p>
+<p><center><img src="https://cptwin.lolnet.co.nz/img/nicenabsimpson.gif" /></center></p>
+<p>So when performing a pentest one could just look for user controllable target=”_blank” links right?</p>
+<p>Well it turns out that even though this issue is a fairly low risk one at best (it requires specific circumstances, user interaction etc.) the developers at Google, Mozilla, and Apple decided it would be a good idea to mitigate this issue by default. Every link is now treated as rel="noopener” by default in Chrome, Firefox, and Safari.</p>
+<p>So, now to get the same issue the web application would need to have a user controllable link with target=”_blank” and rel="opener" attributes set.</p>
+<p>I’ve built a Burp Plugin to provide as a template for further development that looks for these attributes during testing. I’ll post it up on my website and GitHub and make it available for others (if you find it useful).</p>
+<h2>TL:DR</h2>
+<p>The _blank issue has been mostly mitigated by modern browsers, but my Burp Plugin template might be worth a look to find edge cases or develop other Burp Plugins.</p>
+<h2>Proof of Concept</h2>
+<p><a href="https://cptwin.github.io/pocs/underscoreblank1.html">https://cptwin.github.io/pocs/underscoreblank1.html</a></p>
+<h2>References</h2>
+<p>W3schools.com - HTML a target Attribute</p>
+<p><a href="https://www.w3schools.com/tags/att_a_target.asp" />https://www.w3schools.com/tags/att_a_target.asp</a></p>
+<p>Chrome Platform Status: Feature: Anchor target=_blank implies rel=noopener by default</p>
+<p><a href="https://www.chromestatus.com/feature/6140064063029248" />https://www.chromestatus.com/feature/6140064063029248</a></p>
+<p>WebKit Bugzilla: Bug 155166: Implement rel=noopener</p>
+<p><a href="https://bugs.webkit.org/show_bug.cgi?id=155166" />https://bugs.webkit.org/show_bug.cgi?id=155166</a></p>
+<p>Bugzilla: Implement rel=noopener</p>
+<p><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1222516" />https://bugzilla.mozilla.org/show_bug.cgi?id=1222516</a></p>
+</div>
