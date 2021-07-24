@@ -1,0 +1,51 @@
+---
+title: "_blank Burp Plugin"
+date: 2021-07-24
+author: CptWin
+---
+
+<div>
+<p>This is a follow up post to the <a href="https://cptwin.lolnet.co.nz/post/2021-07-17-underscoreblanklinks">_blank Links</a> write up I did recently.</p>
+<p>Burp Suite is a tool I use daily for pentesting, one of it’s important functions is the ability to extend the tool itself with plugins. Given my history of writing tons of <a href="https://github.com/cptwin?tab=repositories&q=&type=&language=java">Java</a> (ಠ_ಠ) I figured I should take a look at extending the tool I use everyday.</p>
+<p><center><img src="https://cptwin.lolnet.co.nz/img/javajockey.gif"/></center></p>
+<p>You can technically write Burp Suite plugins in Python or Ruby. My Ruby skills aren’t amazing, and neither Python or Ruby are highly recommended by Port Swigger.</p>
+<p><center><a href="https://portswigger.net/support/how-to-install-an-extension-in-burp-suite">"<strong>Note: </strong>Because of the way in which Jython and JRuby dynamically generate Java classes, you may encounter memory problems if you load several different Python/Ruby extensions, or if you unload and reload a Python/Ruby extension multiple times."</a></center></p>
+<p>The UnderscoreBlank plugin can be found on my GitHub:</p>
+<p><a href="https://github.com/cptwin/_blank-Burp-Plugin">https://github.com/cptwin/_blank-Burp-Plugin</a></p>
+<p>Feel free to use it in any way shape or form, or not. I would highly recommend anyone developing Java use the Jetbrains IntelliJ IDEA. The Community edition is perfectly good for most development I’ve come across.</p>
+<p>I won’t dive too far into getting a Hello World example up as Port Swigger has great documentation on how to get started writing Burp Suite plugins already written. <a href="https://portswigger.net/burp/extender/writing-your-first-burp-suite-extension">https://portswigger.net/burp/extender/writing-your-first-burp-suite-extension</a></p>
+<p>The UnderscoreBlank plugin is simple, it gets loaded by Burp Suite, and when a response comes in it fires the doPassiveScan method.</p>
+<p><pre style='color:#d1d1d1;background:#000000;'><span style='color:#8695b8; font-weight:bold; '>@Override</span>
+<span style='color:#e66170; font-weight:bold; '>public</span> List&lt;IScanIssue> doPassiveScan(IHttpRequestResponse baseRequestResponse) <span style='color:#b060b0; '>{</span>
+    <span style='color:#e66170; font-weight:bold; '>return</span> checkForVuln<span style='color:#d2cd86; '>(</span>baseRequestResponse<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+<span style='color:#b060b0; '>}</span>
+</pre>
+</p>
+<p>Which returns the result of the checkForVuln method. The checkForVuln method simply compiles two matcher objects (yes, there is room for performance and code tidiness here) that check for target=_blank and rel=opener in any responses that come through.</p>
+<p><pre style='color:#d1d1d1;background:#000000;'><span style='color:#e66170; font-weight:bold; '>public</span> List&lt;IScanIssue> checkForVuln(IHttpRequestResponse baseRequestResponse) <span style='color:#b060b0; '>{</span>
+    <span style='color:#bb7977; font-weight:bold; '>String</span> response <span style='color:#d2cd86; '>=</span> helpers<span style='color:#d2cd86; '>.</span>bytesToString<span style='color:#d2cd86; '>(</span>baseRequestResponse<span style='color:#d2cd86; '>.</span>getResponse<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#bb7977; font-weight:bold; '>Pattern</span> patternUnderscoreBlank <span style='color:#d2cd86; '>=</span> <span style='color:#bb7977; font-weight:bold; '>Pattern</span><span style='color:#d2cd86; '>.</span>compile<span style='color:#d2cd86; '>(</span><span style='color:#00c4c4; '>".*target=</span><span style='color:#008080; '>\"</span><span style='color:#00c4c4; '>_blank</span><span style='color:#008080; '>\"</span><span style='color:#00c4c4; '>.*"</span><span style='color:#d2cd86; '>,</span> <span style='color:#bb7977; font-weight:bold; '>Pattern</span><span style='color:#d2cd86; '>.</span>DOTALL<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#bb7977; font-weight:bold; '>Matcher</span> matcherUnderscoreBlank <span style='color:#d2cd86; '>=</span> patternUnderscoreBlank<span style='color:#d2cd86; '>.</span>matcher<span style='color:#d2cd86; '>(</span>response<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#bb7977; font-weight:bold; '>Pattern</span> patternRelOpener <span style='color:#d2cd86; '>=</span> <span style='color:#bb7977; font-weight:bold; '>Pattern</span><span style='color:#d2cd86; '>.</span>compile<span style='color:#d2cd86; '>(</span><span style='color:#00c4c4; '>".*rel=</span><span style='color:#008080; '>\"</span><span style='color:#00c4c4; '>opener</span><span style='color:#008080; '>\"</span><span style='color:#00c4c4; '>.*"</span><span style='color:#d2cd86; '>,</span> <span style='color:#bb7977; font-weight:bold; '>Pattern</span><span style='color:#d2cd86; '>.</span>DOTALL<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#bb7977; font-weight:bold; '>Matcher</span> matcherRelOpener <span style='color:#d2cd86; '>=</span> patternRelOpener<span style='color:#d2cd86; '>.</span>matcher<span style='color:#d2cd86; '>(</span>response<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#9999a9; '>//Check match for html pages only</span>
+    <span style='color:#e66170; font-weight:bold; '>if</span> <span style='color:#d2cd86; '>(</span>matcherUnderscoreBlank<span style='color:#d2cd86; '>.</span>matches<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span> <span style='color:#d2cd86; '>&amp;</span><span style='color:#d2cd86; '>&amp;</span> matcherRelOpener<span style='color:#d2cd86; '>.</span>matches<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span> <span style='color:#b060b0; '>{</span>
+        <span style='color:#bb7977; font-weight:bold; '>List</span><span style='color:#d2cd86; '>&lt;</span>IScanIssue<span style='color:#d2cd86; '>></span> issues <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>new</span> <span style='color:#bb7977; font-weight:bold; '>ArrayList</span><span style='color:#d2cd86; '>&lt;</span><span style='color:#d2cd86; '>></span><span style='color:#d2cd86; '>(</span><span style='color:#008c00; '>1</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+        issues<span style='color:#d2cd86; '>.</span>add<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>new</span> UnderscoreBlankIssue<span style='color:#d2cd86; '>(</span>baseRequestResponse<span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+        <span style='color:#e66170; font-weight:bold; '>return</span> issues<span style='color:#b060b0; '>;</span>
+    <span style='color:#b060b0; '>}</span>
+    <span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
+<span style='color:#b060b0; '>}</span>
+</pre>
+</p>
+<p>Additionally (although somewhat redundantly) when an active scan is performed the same functionality will be called. However, this will fire through the aptly named doActiveScan.</p>
+<p><pre style='color:#d1d1d1;background:#000000;'><span style='color:#8695b8; font-weight:bold; '>@Override</span>
+<span style='color:#e66170; font-weight:bold; '>public</span> List&lt;IScanIssue> doActiveScan(IHttpRequestResponse baseRequestResponse, IScannerInsertionPoint insertionPoint) <span style='color:#b060b0; '>{</span>
+    <span style='color:#e66170; font-weight:bold; '>return</span> checkForVuln<span style='color:#d2cd86; '>(</span>baseRequestResponse<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+<span style='color:#b060b0; '>}</span>
+</pre></p>
+<p>If you point your Burp Suite against: <a href="https://cptwin.github.io/pocs/underscoreblank1.html">https://cptwin.github.io/pocs/underscoreblank1.html</a> with either a Passive or Active scan, you will see this finding pop up in the interface.</p>
+<p><center><img src="https://cptwin.lolnet.co.nz/img/burpUnderscoreBlank.png"></center></p>
+<p>This information is controlled from the <a href="https://github.com/cptwin/_blank-Burp-Plugin/blob/97e802c215eaa729dac16af30f7cc28005761548/src/burp/BurpExtender.java#L71-L159">UnderscoreBlankIssue</a> class and presented to the user. If I were to build a plugin with multiple issues I would probably create this in its own file to make it easier to find and use. The issue details could do with updating as well.</p>
+<p>Hopefully this helps someone kickstart a project they were thinking about starting. Let me know if you end up making a Burp Suite plugin (even if it isn’t using my starter project).</p>
+</div>
