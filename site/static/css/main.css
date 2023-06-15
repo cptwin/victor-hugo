@@ -665,6 +665,7 @@ h4.panel-title > span.badge {
 
 table {
   padding: 0;
+  color: black;
 }
 table tr {
   border-top: 1px solid #cccccc;
