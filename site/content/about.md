@@ -10,7 +10,7 @@ This site is an attempt to collate my ramblings, research, and interesting thing
 
 Most of it is about computer security and technology.
 
-<center><img src="https://cptwin.lolnet.co.nz/img/ZB_U0OgS_400x400.jpg" alt="my profile picture" style="display: block; margin-left: auto; margin-right: auto;" class="img-circle"></center>
+<center><img src="https://cptwin.lolnet.co.nz/img/website_profile_pic.jpg" alt="my profile picture" style="display: block; margin-left: auto; margin-right: auto;" class="img-circle"></center>
 
 My socials:
 <a href="https://twitter.com/dajnewin"><img style="display: block; margin-left: auto; margin-right: auto;" class="img-circle" src="https://cptwin.lolnet.co.nz/img/Twitter_Social_Icon_Rounded_Square_Color.png" /></a>
